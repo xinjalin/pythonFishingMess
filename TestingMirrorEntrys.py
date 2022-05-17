@@ -3,6 +3,7 @@ from tkinter import *
 
 class LoginFrame:
     def __init__(self, master):
+        self.master = master
         application_frame = Frame(master)
         root.title("Bag Alert")
         root.resizable(False, False)
@@ -22,7 +23,7 @@ class LoginFrame:
         self.myCheckButton = Checkbutton(text="show password", command=self.show_password)
         self.myCheckButton.grid(row=2, column=0, columnspan=2, padx=10, pady=5)
 
-        self.myButton = Button(master, text="login", width=10, command="#")
+        self.myButton = Button(master, text="login", width=10, command=self.swap_frame)
         self.myButton.grid(row=3, column=0, columnspan=2, padx=10, pady=5)
 
     def show_password(self):
@@ -31,10 +32,16 @@ class LoginFrame:
         else:
             self.password_entry.config(show="*")
 
+    def swap_frame(self):
+        # self.master.destroy()
+        print("balls")
+
 
 class FishingFrame:
-    def __init__(self, master):
-        application_frame = Frame(master)
+    def __init__(self, container):
+        self.container = container
+        application_frame = Frame(container)
+        application_frame.pack()
         root.title("page 2")
 
 
