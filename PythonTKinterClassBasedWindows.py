@@ -1,6 +1,7 @@
 from tkinter import *
 from csv import DictReader
 
+# trying figure where I need to call load fish data
 list_of_dict = {}
 
 
@@ -44,6 +45,7 @@ class WindowLogin:
         # GUI loop
         self.root.mainloop()
 
+    # show password toggle
     def show_password(self):
 
         if self.password_entry.cget("show") == "*":
@@ -57,7 +59,9 @@ class WindowLogin:
         if self.username_entry.get() == "admin" and self.password_entry.get() == "admin":
             print("Login successful")
             # open new window
+            # destroy current window
             self.root.destroy()
+            # create new window from the WindowFishGame class
             root = Tk()
             WindowFishGame(root, "Fish Game", "400x400")
         else:
@@ -78,5 +82,6 @@ class WindowFishGame:
         self.root.mainloop()
 
 
+# -------------------------------------------------------------------------------------------------------------------- #
 if __name__ == '__main__':
     main()
