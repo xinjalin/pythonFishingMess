@@ -1,11 +1,22 @@
 from tkinter import *
+from csv import DictReader
+
+list_of_dict = {}
 
 
 def main():
     root = Tk()
-    window_login = WindowLogin(root, "Login")
-    # window_fish_game = WindowFishGame(root, "Fish Game", "400x400")  # docent work
+    WindowLogin(root, "Login")
     return None
+
+
+def load_fish_data():
+    global list_of_dict
+
+    with open('Fish.csv', 'r') as csv_file_in_memory:
+        dict_reader = DictReader(csv_file_in_memory)
+        list_of_dict = list(dict_reader)
+        print(list_of_dict)
 
 
 class WindowLogin:
@@ -41,7 +52,6 @@ class WindowLogin:
             self.password_entry.config(show="")
         else:
             self.password_entry.config(show="*")
-        pass
 
     def login(self):
 
@@ -50,13 +60,9 @@ class WindowLogin:
             # open new window
             self.root.destroy()
             root = Tk()
-            window_fish_game = WindowFishGame(root, "Fish Game", "400x400")
-            pass
+            WindowFishGame(root, "Fish Game", "400x400")
         else:
             print("Login failed")
-        pass
-
-    pass
 
 
 class WindowFishGame:
@@ -66,13 +72,10 @@ class WindowFishGame:
         self.root.title(title)
         self.root.geometry(geometry)  # formatted as "width x height"
 
-        self.fish_name_label = Label(self.root, text="fish name")
+        self.fish_name_label = Label(self.root, text="Fish Name")
         self.fish_name_label.pack(side=LEFT, padx=10, pady=5)
 
         self.root.mainloop()
-        pass
-
-    pass
 
 
 if __name__ == '__main__':
