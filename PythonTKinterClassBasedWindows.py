@@ -26,6 +26,7 @@ class WindowLogin:
     def __init__(self, root, title):
         self.root = root
         self.root.title(title)
+        self.root.bind("<Return>", self.login)
         # username
         self.username_label = Label(self.root, text="Username")
         self.username_label.grid(row=0, column=0, padx=10, pady=5)
@@ -53,7 +54,7 @@ class WindowLogin:
         else:
             self.password_entry.config(show="*")
 
-    def login(self):
+    def login(self, event):
         # username = admin
         # password = admin
         if self.username_entry.get() == "admin" and self.password_entry.get() == "admin":
@@ -78,6 +79,32 @@ class WindowFishGame:
 
         self.fish_name_label = Label(self.root, text="Fish Name")
         self.fish_name_label.pack(side=LEFT, padx=10, pady=5)
+
+        # get dictionary from load_fish_data()
+        #
+        #    inter class for fish template
+        #      -> name
+        #      -> keeper y/n
+        #      -> fish y/n
+        #      -> points if kept
+        #      -> points if released
+        #
+        # go fishing button
+        #
+        #   go fishing loop
+        #     -> start fishing
+        #     -> encounter fish
+        #     -> choose to keep or release fish
+        #     -> store fish in kept or released list
+        #     -> end fishing
+        #         -> show kept and released list
+        #         -> show total caught
+        #         -> show total points
+        #
+        # keep and release button at end of fishing
+        # list of kept fish
+        # list of released fish
+        # score label
 
         self.root.mainloop()
 
