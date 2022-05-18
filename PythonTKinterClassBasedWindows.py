@@ -1,23 +1,12 @@
 from tkinter import *
 from csv import DictReader
 
-# trying figure where I need to call load fish data
-list_of_dict = {}
 
-
+# -------------------------------------------------------------------------------------------------------------------- #
 def main():
     root = Tk()
     WindowLogin(root, "Login")
     return None
-
-
-def load_fish_data():
-    global list_of_dict
-
-    with open('Fish.csv', 'r') as csv_file_in_memory:
-        dict_reader = DictReader(csv_file_in_memory)
-        list_of_dict = list(dict_reader)
-        print(list_of_dict)
 
 
 # -------------------------------------------------------------------------------------------------------------------- #
@@ -81,9 +70,6 @@ class WindowFishGame:
         self.root.title(title)
         self.root.geometry(geometry)  # 400x400
 
-        self.fish_name_label = Label(self.root, text="Fish Name")
-        self.fish_name_label.pack(side=LEFT, padx=10, pady=5)
-
         #    get dictionary from load_fish_data()
         #
         #       inter class for fish template
@@ -110,10 +96,40 @@ class WindowFishGame:
         #    list of released fish
         #    score label
 
+        class FishTemplate:
+            def __init__(self, name, keeper, fish, points_kept, points_released):
+                self.name = name
+                self.keeper = keeper
+                self.fish = fish
+                self.points_kept = points_kept
+                self.points_released = points_released
+
+        # load fish data
+        self.fish_data = self.load_fish_data()
+
+        self.KGW = FishTemplate(self.fish_data[0]["Name"],
+                                self.fish_data[0]["Keeper"],
+                                self.fish_data[0]["Fish"],
+                                self.fish_data[0]["Points if kept"],
+                                self.fish_data[0]["Points if released"])
+
+        self.fish_name_label = Label(self.root, text=self.KGW.name)
+        self.fish_name_label.pack(side=LEFT, padx=10, pady=5)
+
+        # self.go_fishing_button = Button(self.root, text="Go Fishing", width=10, command=self.go_fishing)
+        # self.go_fishing_button.pack(side=LEFT, padx=10, pady=5)
+
         self.root.mainloop()
 
     def go_fishing(self):
         pass
+
+    @classmethod
+    def load_fish_data(cls):
+        with open('Fish.csv', 'r') as csv_file_in_memory:
+            dict_reader = DictReader(csv_file_in_memory)
+            list_of_dict = list(dict_reader)
+            return list_of_dict
 
 
 # -------------------------------------------------------------------------------------------------------------------- #
