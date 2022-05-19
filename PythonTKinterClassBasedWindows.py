@@ -1,4 +1,5 @@
 from tkinter import *
+from tkinter.messagebox import showinfo
 from csv import DictReader
 
 
@@ -15,6 +16,7 @@ class WindowLogin:
     def __init__(self, root, title):
         self.root = root
         self.root.title(title)
+        # key bindings
         self.root.bind("<Return>", self.login)
         self.root.bind("<Escape>", self.close)
         # username
@@ -31,7 +33,7 @@ class WindowLogin:
         self.myCheckButton = Checkbutton(text="show password", command=self.show_password)
         self.myCheckButton.grid(row=2, column=0, columnspan=2, padx=10, pady=5)
         # login button
-        self.myButton = Button(self.root, text="login", width=10, command=self.login)
+        self.myButton = Button(self.root, text="login", width=10, command=lambda: self.login(self))
         self.myButton.grid(row=3, column=0, columnspan=2, padx=10, pady=5)
         # GUI loop
         self.root.mainloop()
@@ -56,7 +58,7 @@ class WindowLogin:
             root = Tk()
             WindowFishGame(root, "Fish Game", "400x400")
         else:
-            print("Login failed")
+            showinfo("Login", "Invalid username or password")
 
     def close(self, event):
         self.root.destroy()
@@ -70,18 +72,18 @@ class WindowFishGame:
         self.root.title(title)
         self.root.geometry(geometry)  # 400x400
 
-        #    get dictionary from load_fish_data()
+        #    get dictionary from load_fish_data()                    # done
         #
-        #       inter class for fish template
+        #       inter class for fish template                        # done
         #         -> name
         #         -> keeper y/n
         #         -> fish y/n
         #         -> points if kept
         #         -> points if released
         #
-        #    go fishing button
+        #    go fishing button                                       # created needs game added
         #
-        #      go fishing loop
+        #      go fishing loop                                       # needs to be added to going fishing button
         #        -> start fishing
         #        -> encounter fish
         #        -> choose to keep or release fish
@@ -91,8 +93,8 @@ class WindowFishGame:
         #            -> show total caught
         #            -> show total points
         #
-        #    keep and release button at end of fishing
-        #    list of kept fish
+        #    keep and release button at end of fishing                # build GUI to display kept and released list
+        #     of kept fish
         #    list of released fish
         #    score label
 
