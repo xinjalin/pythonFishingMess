@@ -50,7 +50,7 @@ class WindowLogin:
         # username = admin
         # password = admin
         if self.username_entry.get() == "admin" and self.password_entry.get() == "admin":
-            print("Login successful")
+            showinfo("Login successful", "Welcome to Going Fishing!")
             # open new window
             # destroy current window
             self.root.destroy()
