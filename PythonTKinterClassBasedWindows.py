@@ -81,6 +81,7 @@ class WindowFishGame:
         # vars used to store fish data
         self.players_fish_list = []
         self.players_kept_fish_list = []
+        self.players_illegal_fish_list = []
         self.players_released_fish_list = []
         self.players_total_points = 0
 
@@ -159,7 +160,8 @@ class WindowFishGame:
         self.finish_fishing_button = Button(self.root, text="Finish Fishing", width=10,
                                             command=lambda: self.finish_fishing(self.players_total_points,
                                                                                 self.players_kept_fish_list,
-                                                                                self.players_released_fish_list))
+                                                                                self.players_released_fish_list,
+                                                                                self.players_illegal_fish_list))
         self.finish_fishing_button.grid(row=4, column=0, padx=10, pady=5)
 
         self.root.mainloop()
@@ -225,6 +227,7 @@ class WindowFishGame:
             self.release_fish_button.config(state=DISABLED)
 
         else:
+            self.players_illegal_fish_list.append(current_fish)
             self.players_total_points += int(current_fish["Points if kept"])
             self.player_points_label_two.config(text=self.players_total_points)
             self.fish_name_label_two.config(fg='red', text="This fish is not a keeper")
@@ -244,7 +247,8 @@ class WindowFishGame:
         self.release_fish_button.config(state=DISABLED)
 
     @classmethod
-    def finish_fishing(cls, players_points, players_kept_fish_list, players_released_fish_list):
+    def finish_fishing(cls,
+                       players_points, players_kept_fish_list, players_released_fish_list, players_illegal_fish_list):
         root = Tk()
         root.title("Fishing Results")
 
@@ -253,13 +257,18 @@ class WindowFishGame:
         kept_fish_count_list = list(kept_fish_count.items())
         Label(root, text=f"Fish you kept: {kept_fish_count_list}").grid(row=0, column=0)
 
+        # display how many times a player as a type of fish in illegal fish
+        illegal_fish_count = Counter(fish["Name"] for fish in players_illegal_fish_list)
+        illegal_fish_count_list = list(illegal_fish_count.items())
+        Label(root, text=f"Illegal Fish you kept: {illegal_fish_count_list}").grid(row=1, column=0)
+
         # display how many times a player as a type of fish in released fish
         released_fish_count = Counter(fish["Name"] for fish in players_released_fish_list)
         released_fish_count_list = list(released_fish_count.items())
-        Label(root, text=f"Fish you released: {released_fish_count_list}").grid(row=1, column=0)
+        Label(root, text=f"Fish you released: {released_fish_count_list}").grid(row=2, column=0)
 
         # display players total points after fishing
-        Label(root, text=f"Total points: {players_points}").grid(row=2, column=0)
+        Label(root, text=f"Total points: {players_points}").grid(row=3, column=0)
 
     @classmethod
     def load_fish_data(cls):
