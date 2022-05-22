@@ -1,7 +1,7 @@
 Name,Keeper,Fish,Points if kept,Points if released
-King George Whiting,Y,y,50,70
+King George Whiting,Y,Y,50,70
 Lost bait,N,N,-10,0
 Small Mulloway,Y,Y,-10,10
 Snapper,Y,Y,30,40
 Large Mullet,Y,Y,20,20
-Seaweed Monster (random clump of seaweed,Y,N,5,-5
+Seaweed Monster (random) clump of seaweed,Y,N,5,-5

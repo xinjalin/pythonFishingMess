@@ -1,6 +1,9 @@
+from collections import Counter
+from dataclasses import dataclass
 from tkinter import *
 from tkinter.messagebox import showinfo
 from csv import DictReader
+from random import randint
 
 
 # -------------------------------------------------------------------------------------------------------------------- #
@@ -56,7 +59,7 @@ class WindowLogin:
             self.root.destroy()
             # create new window from the WindowFishGame class
             root = Tk()
-            WindowFishGame(root, "Fish Game", "400x400")
+            WindowFishGame(root, "Fish Game")
         else:
             showinfo("Login", "Invalid username or password")
 
@@ -67,37 +70,22 @@ class WindowLogin:
 # -------------------------------------------------------------------------------------------------------------------- #
 class WindowFishGame:
     # Class constructor
-    def __init__(self, root, title, geometry):
+    def __init__(self, root, title):
         self.root = root
         self.root.title(title)
-        self.root.geometry(geometry)  # 400x400
+        # ---------------------------------------------------------------------------------
+        # load fish data
+        self.fish_data = self.load_fish_data()
+        # random number 1-6
+        self.random_number = randint(1, 6)
+        # vars used to store fish data
+        self.players_fish_list = []
+        self.players_kept_fish_list = []
+        self.players_released_fish_list = []
+        self.players_total_points = 0
 
-        #    get dictionary from load_fish_data()                    # done
-        #
-        #       inter class for fish template                        # done
-        #         -> name
-        #         -> keeper y/n
-        #         -> fish y/n
-        #         -> points if kept
-        #         -> points if released
-        #
-        #    go fishing button                                       # created needs game added
-        #
-        #      go fishing loop                                       # needs to be added to going fishing button
-        #        -> start fishing
-        #        -> encounter fish
-        #        -> choose to keep or release fish
-        #        -> store fish in kept or released list
-        #        -> end fishing
-        #            -> show kept and released list
-        #            -> show total caught
-        #            -> show total points
-        #
-        #    keep and release button at end of fishing                # build GUI to display kept and released list
-        #     of kept fish
-        #    list of released fish
-        #    score label
-
+        # fish template class
+        @dataclass()
         class FishTemplate:
             def __init__(self, name, keeper, fish, points_kept, points_released):
                 self.name = name
@@ -106,25 +94,172 @@ class WindowFishGame:
                 self.points_kept = points_kept
                 self.points_released = points_released
 
-        # load fish data
-        self.fish_data = self.load_fish_data()
+        # Fish objects
+        self.king_george_whiting = FishTemplate(self.fish_data[0]["Name"],
+                                                self.fish_data[0]["Keeper"],
+                                                self.fish_data[0]["Fish"],
+                                                self.fish_data[0]["Points if kept"],
+                                                self.fish_data[0]["Points if released"])
 
-        self.KGW = FishTemplate(self.fish_data[0]["Name"],
-                                self.fish_data[0]["Keeper"],
-                                self.fish_data[0]["Fish"],
-                                self.fish_data[0]["Points if kept"],
-                                self.fish_data[0]["Points if released"])
+        self.lost_bait = FishTemplate(self.fish_data[1]["Name"],
+                                      self.fish_data[1]["Keeper"],
+                                      self.fish_data[1]["Fish"],
+                                      self.fish_data[1]["Points if kept"],
+                                      self.fish_data[1]["Points if released"])
 
-        self.fish_name_label = Label(self.root, text=self.KGW.name)
-        self.fish_name_label.pack(side=LEFT, padx=10, pady=5)
+        self.small_mulloway = FishTemplate(self.fish_data[2]["Name"],
+                                           self.fish_data[2]["Keeper"],
+                                           self.fish_data[2]["Fish"],
+                                           self.fish_data[2]["Points if kept"],
+                                           self.fish_data[2]["Points if released"])
 
-        # self.go_fishing_button = Button(self.root, text="Go Fishing", width=10, command=self.go_fishing)
-        # self.go_fishing_button.pack(side=LEFT, padx=10, pady=5)
+        self.snapper = FishTemplate(self.fish_data[3]["Name"],
+                                    self.fish_data[3]["Keeper"],
+                                    self.fish_data[3]["Fish"],
+                                    self.fish_data[3]["Points if kept"],
+                                    self.fish_data[3]["Points if released"])
+
+        self.large_mullet = FishTemplate(self.fish_data[4]["Name"],
+                                         self.fish_data[4]["Keeper"],
+                                         self.fish_data[4]["Fish"],
+                                         self.fish_data[4]["Points if kept"],
+                                         self.fish_data[4]["Points if released"])
+
+        self.seaweed_monster = FishTemplate(self.fish_data[5]["Name"],
+                                            self.fish_data[5]["Keeper"],
+                                            self.fish_data[5]["Fish"],
+                                            self.fish_data[5]["Points if kept"],
+                                            self.fish_data[5]["Points if released"])
+
+        # fish GUI ------------------------------------------------------------------------
+        self.fish_name_label = Label(self.root, text="Fish Name")
+        self.fish_name_label.grid(row=0, column=0, padx=10, pady=5)
+
+        self.fish_name_label_two = Label(self.root, text="")
+        self.fish_name_label_two.grid(row=0, column=1, padx=10, pady=5)
+
+        self.player_points_label = Label(self.root, text="Player Points: ")
+        self.player_points_label.grid(row=2, column=0, padx=10, pady=5)
+
+        self.player_points_label_two = Label(self.root, text="")
+        self.player_points_label_two.grid(row=2, column=1, padx=10, pady=5)
+
+        # buttons
+        self.go_fishing_button = Button(self.root, text="Go Fishing", width=10, command=self.go_fishing)
+        self.go_fishing_button.grid(row=3, column=0, padx=10, pady=5)
+
+        self.keep_fish_button = Button(self.root, text="Keep Fish", command=self.keep_fish)
+        self.keep_fish_button.grid(row=3, column=1, padx=10, pady=5)
+        self.keep_fish_button.config(state=DISABLED)
+
+        self.release_fish_button = Button(self.root, text="Release Fish", command=self.release_fish)
+        self.release_fish_button.grid(row=3, column=2, padx=10, pady=5)
+        self.release_fish_button.config(state=DISABLED)
+
+        self.finish_fishing_button = Button(self.root, text="Finish Fishing", width=10,
+                                            command=lambda: self.finish_fishing(self.players_total_points,
+                                                                                self.players_kept_fish_list,
+                                                                                self.players_released_fish_list))
+        self.finish_fishing_button.grid(row=4, column=0, padx=10, pady=5)
 
         self.root.mainloop()
+        # GUI loop ------------------------------------------------------------------------
 
     def go_fishing(self):
-        pass
+        # random number 1-6
+        self.random_number = randint(1, 6)
+        self.fish_name_label_two.config(fg='black')
+
+        if self.random_number == 1:
+            self.fish_name_label_two.config(text=self.fish_data[0]["Name"])
+            self.players_fish_list.append(self.king_george_whiting)
+            self.go_fishing_button.config(state=DISABLED)
+            self.keep_fish_button.config(state=NORMAL)
+            self.release_fish_button.config(state=NORMAL)
+
+        elif self.random_number == 2:
+            self.fish_name_label_two.config(text=self.fish_data[1]["Name"])
+            self.players_fish_list.append(self.lost_bait)
+            self.go_fishing_button.config(state=DISABLED)
+            self.keep_fish_button.config(state=NORMAL)
+            self.release_fish_button.config(state=NORMAL)
+
+        elif self.random_number == 3:
+            self.fish_name_label_two.config(text=self.fish_data[2]["Name"])
+            self.players_fish_list.append(self.small_mulloway)
+            self.go_fishing_button.config(state=DISABLED)
+            self.keep_fish_button.config(state=NORMAL)
+            self.release_fish_button.config(state=NORMAL)
+
+        elif self.random_number == 4:
+            self.fish_name_label_two.config(text=self.fish_data[3]["Name"])
+            self.players_fish_list.append(self.snapper)
+            self.go_fishing_button.config(state=DISABLED)
+            self.keep_fish_button.config(state=NORMAL)
+            self.release_fish_button.config(state=NORMAL)
+
+        elif self.random_number == 5:
+            self.fish_name_label_two.config(text=self.fish_data[4]["Name"])
+            self.players_fish_list.append(self.large_mullet)
+            self.go_fishing_button.config(state=DISABLED)
+            self.keep_fish_button.config(state=NORMAL)
+            self.release_fish_button.config(state=NORMAL)
+
+        elif self.random_number == 6:
+            self.fish_name_label_two.config(text=self.fish_data[5]["Name"])
+            self.players_fish_list.append(self.seaweed_monster)
+            self.go_fishing_button.config(state=DISABLED)
+            self.keep_fish_button.config(state=NORMAL)
+            self.release_fish_button.config(state=NORMAL)
+
+    def keep_fish(self):
+        current_fish_value = self.fish_name_label_two.cget("text")
+        current_fish = next(z for z in self.fish_data if z["Name"] == current_fish_value)
+
+        if current_fish["Keeper"] == "Y":
+            self.players_kept_fish_list.append(current_fish)
+            self.players_total_points += int(current_fish["Points if kept"])
+            self.player_points_label_two.config(text=self.players_total_points)
+            self.go_fishing_button.config(state=NORMAL)
+            self.keep_fish_button.config(state=DISABLED)
+            self.release_fish_button.config(state=DISABLED)
+
+        else:
+            self.players_total_points += int(current_fish["Points if kept"])
+            self.player_points_label_two.config(text=self.players_total_points)
+            self.fish_name_label_two.config(fg='red', text="This fish is not a keeper")
+            self.go_fishing_button.config(state=NORMAL)
+            self.keep_fish_button.config(state=DISABLED)
+            self.release_fish_button.config(state=DISABLED)
+
+    def release_fish(self):
+        current_fish_value = self.fish_name_label_two.cget("text")
+        current_fish = next(z for z in self.fish_data if z["Name"] == current_fish_value)
+        self.players_released_fish_list.append(current_fish)
+
+        self.players_total_points += int(current_fish["Points if released"])
+        self.player_points_label_two.config(text=self.players_total_points)
+        self.go_fishing_button.config(state=NORMAL)
+        self.keep_fish_button.config(state=DISABLED)
+        self.release_fish_button.config(state=DISABLED)
+
+    @classmethod
+    def finish_fishing(cls, players_points, players_kept_fish_list, players_released_fish_list):
+        root = Tk()
+        root.title("Fishing Results")
+
+        # display how many times a player as a type of fish in kept fish
+        kept_fish_count = Counter(fish["Name"] for fish in players_kept_fish_list)
+        kept_fish_count_list = list(kept_fish_count.items())
+        Label(root, text=f"Fish you kept: {kept_fish_count_list}").grid(row=0, column=0)
+
+        # display how many times a player as a type of fish in released fish
+        released_fish_count = Counter(fish["Name"] for fish in players_released_fish_list)
+        released_fish_count_list = list(released_fish_count.items())
+        Label(root, text=f"Fish you released: {released_fish_count_list}").grid(row=1, column=0)
+
+        # display players total points after fishing
+        Label(root, text=f"Total points: {players_points}").grid(row=2, column=0)
 
     @classmethod
     def load_fish_data(cls):
