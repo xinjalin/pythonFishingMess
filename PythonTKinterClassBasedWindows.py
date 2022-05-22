@@ -165,6 +165,7 @@ class WindowFishGame:
                                                                                 self.players_released_fish_list,
                                                                                 self.players_illegal_fish_list))
         self.finish_fishing_button.grid(row=4, column=0, columnspan=3, padx=10, pady=5)
+        self.finish_fishing_button.config(state=DISABLED)
 
         self.root.mainloop()
         # GUI loop ------------------------------------------------------------------------
@@ -173,6 +174,9 @@ class WindowFishGame:
         # random number 1-6
         self.random_number = randint(1, 6)
         self.fish_name_label_two.config(fg='black')
+        self.keep_fish_button.config(bg='#53917e')
+        self.release_fish_button.config(bg='#fcd0a1')
+        self.finish_fishing_button.config(state=NORMAL)
 
         if self.random_number == 1:
             self.fish_name_label_two.config(text=self.king_george_whiting.name)
@@ -217,6 +221,9 @@ class WindowFishGame:
             self.release_fish_button.config(state=NORMAL)
 
     def keep_fish(self):
+        self.keep_fish_button.config(bg='SystemButtonFace')
+        self.release_fish_button.config(bg='SystemButtonFace')
+
         current_fish_value = self.fish_name_label_two.cget("text")
         current_fish = next(z for z in self.fish_data if z["Name"] == current_fish_value)
 
@@ -238,6 +245,9 @@ class WindowFishGame:
             self.release_fish_button.config(state=DISABLED)
 
     def release_fish(self):
+        self.keep_fish_button.config(bg='SystemButtonFace')
+        self.release_fish_button.config(bg='SystemButtonFace')
+
         current_fish_value = self.fish_name_label_two.cget("text")
         current_fish = next(z for z in self.fish_data if z["Name"] == current_fish_value)
         self.players_released_fish_list.append(current_fish)
