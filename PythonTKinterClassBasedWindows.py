@@ -86,6 +86,7 @@ class WindowFishGame:
         self.players_kept_fish_list = []
         self.players_illegal_fish_list = []
         self.players_released_fish_list = []
+        self.players_lost_bait_list = []
         self.players_total_points = 0
 
         # fish template class
@@ -159,11 +160,7 @@ class WindowFishGame:
         self.release_fish_button.grid(row=3, column=2, padx=10, pady=5)
         self.release_fish_button.config(state=DISABLED)
 
-        self.finish_fishing_button = Button(self.root, text="Finish Fishing", width=70,
-                                            command=lambda: self.finish_fishing(self.players_total_points,
-                                                                                self.players_kept_fish_list,
-                                                                                self.players_released_fish_list,
-                                                                                self.players_illegal_fish_list))
+        self.finish_fishing_button = Button(self.root, text="Finish Fishing", width=70, command=self.reset_game)
         self.finish_fishing_button.grid(row=4, column=0, columnspan=3, padx=10, pady=5)
         self.finish_fishing_button.config(state=DISABLED)
 
@@ -186,11 +183,21 @@ class WindowFishGame:
             self.release_fish_button.config(state=NORMAL)
 
         elif self.random_number == 2:
-            self.fish_name_label_two.config(text=self.lost_bait.name)
+            self.fish_name_label_two.config(fg='red', text=self.lost_bait.name)
             self.players_fish_list.append(self.lost_bait)
-            self.go_fishing_button.config(state=DISABLED)
-            self.keep_fish_button.config(state=NORMAL)
-            self.release_fish_button.config(state=NORMAL)
+
+            current_fish_value = self.fish_name_label_two.cget("text")
+            current_fish = next(z for z in self.fish_data if z["Name"] == current_fish_value)
+
+            self.players_lost_bait_list.append(current_fish)
+            self.players_total_points += int(current_fish["Points if kept"])
+            self.player_points_label_two.config(text=self.players_total_points)
+            self.go_fishing_button.config(state=NORMAL)
+            self.keep_fish_button.config(state=DISABLED)
+            self.release_fish_button.config(state=DISABLED)
+
+            self.keep_fish_button.config(bg='SystemButtonFace')
+            self.release_fish_button.config(bg='SystemButtonFace')
 
         elif self.random_number == 3:
             self.fish_name_label_two.config(text=self.small_mulloway.name)
@@ -258,42 +265,70 @@ class WindowFishGame:
         self.keep_fish_button.config(state=DISABLED)
         self.release_fish_button.config(state=DISABLED)
 
+    def reset_game(self):
+        self.finish_fishing(self.players_total_points, self.players_kept_fish_list, self.players_released_fish_list,
+                            self.players_illegal_fish_list, self.players_lost_bait_list)
+        self.players_fish_list.clear()
+        self.players_kept_fish_list.clear()
+        self.players_illegal_fish_list.clear()
+        self.players_released_fish_list.clear()
+        self.players_total_points = 0
+        self.player_points_label_two.config(text=self.players_total_points)
+        self.fish_name_label_two.config(text="")
+        self.fish_name_label_two.config(fg='black')
+        self.go_fishing_button.config(state=NORMAL)
+        self.keep_fish_button.config(state=DISABLED)
+        self.release_fish_button.config(state=DISABLED)
+
     @classmethod
     def finish_fishing(cls,
-                       players_points, players_kept_fish_list, players_released_fish_list, players_illegal_fish_list):
+                       players_points,
+                       players_kept_fish_list,
+                       players_released_fish_list,
+                       players_illegal_fish_list,
+                       players_lost_bait_list):
         root = Tk()
         root.title("Fishing Results")
         root.iconbitmap("fish.ico")
 
-        # display how many times a player as a type of fish in kept fish
+        # display how many times a player has caught a fish
         kept_fish_count = Counter(fish["Name"] for fish in players_kept_fish_list)
         kept_fish_count_list = list(kept_fish_count.items())
         row_index = 0
         for fish in enumerate(kept_fish_count_list):
-            Label(root, width=70, height=2, anchor="w", bg="#53917e", text=f"Fish you kept: {fish}").grid(row=row_index,
-                                                                                                          column=0)
+            Label(root, width=70, height=2, anchor="w", bg="#53917e",
+                  text=f"Fish you kept: {fish}").grid(row=row_index, column=0)
             row_index += 1
 
-        # display how many times a player as a type of fish in illegal fish
+        # display how many times a player has kept an illegal fish
         illegal_fish_count = Counter(fish["Name"] for fish in players_illegal_fish_list)
         illegal_fish_count_list = list(illegal_fish_count.items())
         row_index = 50
         for fish in enumerate(illegal_fish_count_list):
-            Label(root, width=70, height=2, anchor="w", bg="#db5461", text=f"Illegal Fish you kept: {fish}").grid(
-                row=row_index, column=0)
+            Label(root, width=70, height=2, anchor="w", bg="#db5461",
+                  text=f"Illegal Fish you kept: {fish}").grid(row=row_index, column=0)
             row_index += 1
 
-        # display how many times a player as a type of fish in released fish
+        # display how many times has released a fish
         released_fish_count = Counter(fish["Name"] for fish in players_released_fish_list)
         released_fish_count_list = list(released_fish_count.items())
         row_index = 100
         for fish in enumerate(released_fish_count_list):
-            Label(root, width=70, height=2, anchor="w", bg="#fcd0a1", text=f"Fish you released: {fish}").grid(
+            Label(root, width=70, height=2, anchor="w", bg="#fcd0a1",
+                  text=f"Fish you released: {fish}").grid(row=row_index, column=0)
+            row_index += 1
+
+        # display how many times a player as a type of fish in lost bait
+        lost_bait_count = Counter(fish["Name"] for fish in players_lost_bait_list)
+        players_lost_bait_list = list(lost_bait_count.items())
+        row_index = 150
+        for fish in enumerate(players_lost_bait_list):
+            Label(root, width=70, height=2, anchor="w", bg="#edf060", text=f"How many times you: {fish}").grid(
                 row=row_index, column=0)
             row_index += 1
 
         # display players total points after fishing
-        Label(root, text=f"Total points: {players_points}").grid(row=150, column=0)
+        Label(root, text=f"Total points: {players_points}").grid(row=200, column=0)
 
     @classmethod
     def load_fish_data(cls):
