@@ -19,6 +19,7 @@ class WindowLogin:
     def __init__(self, root, title):
         self.root = root
         self.root.title(title)
+        self.root.iconbitmap("fish.ico")
         # key bindings
         self.root.bind("<Return>", self.login)
         self.root.bind("<Escape>", self.close)
@@ -73,6 +74,7 @@ class WindowFishGame:
     def __init__(self, root, title):
         self.root = root
         self.root.title(title)
+        self.root.iconbitmap("fish.ico")
         self.root.config(bg="#dfe0e2")
         # ---------------------------------------------------------------------------------
         # load fish data
@@ -145,7 +147,6 @@ class WindowFishGame:
 
         self.player_points_label_two = Label(self.root, text="", width=45)
         self.player_points_label_two.grid(row=2, column=1, columnspan=2, padx=10, pady=5)
-
         # buttons
         self.go_fishing_button = Button(self.root, text="Go Fishing", width=20, height=3, command=self.go_fishing)
         self.go_fishing_button.grid(row=3, column=0, padx=10, pady=5)
@@ -252,6 +253,7 @@ class WindowFishGame:
                        players_points, players_kept_fish_list, players_released_fish_list, players_illegal_fish_list):
         root = Tk()
         root.title("Fishing Results")
+        root.iconbitmap("fish.ico")
 
         # display how many times a player as a type of fish in kept fish
         kept_fish_count = Counter(fish["Name"] for fish in players_kept_fish_list)
