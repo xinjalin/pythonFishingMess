@@ -171,42 +171,42 @@ class WindowFishGame:
         self.fish_name_label_two.config(fg='black')
 
         if self.random_number == 1:
-            self.fish_name_label_two.config(text=self.fish_data[0]["Name"])
+            self.fish_name_label_two.config(text=self.king_george_whiting.name)
             self.players_fish_list.append(self.king_george_whiting)
             self.go_fishing_button.config(state=DISABLED)
             self.keep_fish_button.config(state=NORMAL)
             self.release_fish_button.config(state=NORMAL)
 
         elif self.random_number == 2:
-            self.fish_name_label_two.config(text=self.fish_data[1]["Name"])
+            self.fish_name_label_two.config(text=self.lost_bait.name)
             self.players_fish_list.append(self.lost_bait)
             self.go_fishing_button.config(state=DISABLED)
             self.keep_fish_button.config(state=NORMAL)
             self.release_fish_button.config(state=NORMAL)
 
         elif self.random_number == 3:
-            self.fish_name_label_two.config(text=self.fish_data[2]["Name"])
+            self.fish_name_label_two.config(text=self.small_mulloway.name)
             self.players_fish_list.append(self.small_mulloway)
             self.go_fishing_button.config(state=DISABLED)
             self.keep_fish_button.config(state=NORMAL)
             self.release_fish_button.config(state=NORMAL)
 
         elif self.random_number == 4:
-            self.fish_name_label_two.config(text=self.fish_data[3]["Name"])
+            self.fish_name_label_two.config(text=self.snapper.name)
             self.players_fish_list.append(self.snapper)
             self.go_fishing_button.config(state=DISABLED)
             self.keep_fish_button.config(state=NORMAL)
             self.release_fish_button.config(state=NORMAL)
 
         elif self.random_number == 5:
-            self.fish_name_label_two.config(text=self.fish_data[4]["Name"])
+            self.fish_name_label_two.config(text=self.large_mullet.name)
             self.players_fish_list.append(self.large_mullet)
             self.go_fishing_button.config(state=DISABLED)
             self.keep_fish_button.config(state=NORMAL)
             self.release_fish_button.config(state=NORMAL)
 
         elif self.random_number == 6:
-            self.fish_name_label_two.config(text=self.fish_data[5]["Name"])
+            self.fish_name_label_two.config(text=self.seaweed_monster.name)
             self.players_fish_list.append(self.seaweed_monster)
             self.go_fishing_button.config(state=DISABLED)
             self.keep_fish_button.config(state=NORMAL)
