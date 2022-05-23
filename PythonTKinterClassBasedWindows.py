@@ -272,6 +272,7 @@ class WindowFishGame:
         self.players_kept_fish_list.clear()
         self.players_illegal_fish_list.clear()
         self.players_released_fish_list.clear()
+        self.players_lost_bait_list.clear()
         self.players_total_points = 0
         self.player_points_label_two.config(text=self.players_total_points)
         self.fish_name_label_two.config(text="")
@@ -279,6 +280,7 @@ class WindowFishGame:
         self.go_fishing_button.config(state=NORMAL)
         self.keep_fish_button.config(state=DISABLED)
         self.release_fish_button.config(state=DISABLED)
+        self.finish_fishing_button.config(state=DISABLED)
 
     @classmethod
     def finish_fishing(cls,
